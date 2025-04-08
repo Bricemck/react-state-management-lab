@@ -1,24 +1,45 @@
 // src/App.jsx
+//Brings in the useState hook from React to manage dynamic state of team members, money, etc.
 import { useState } from 'react';
+
+//Defines main functional component.  Everything inside will be what the app displays and handles.
 
 const App = () => {
 
+  // Holds the list of characters the player adds to their squad. Starts empty.
 const [team, setTeam] = useState([]);
+
+// I hope this is self explanatory....  It's money.  
 const [money, setMoney] = useState(100);
+
+//Checks to see if player has enough money to buy fighter.
+//If yes, add the fighter to team. 
+//Subtract from money total.
+//removes the fighter from zombieFighters so they can't be picked again.
 const handleAddToTeam = (fighter) => {
   if (money >= fighter.price) {
     setTeam([...team, fighter]);
     setMoney(money - fighter.price);
+    // .filter method creates a new array that contains only fighters passed inside of it.
+    //used f for each zombie fighter in the zombieFighters array.
+    //f.id !== fighter.id means 'only keep fighters whose id does NOT match the one we added.
+    //'Go through the zombie fighters list, and make a new list that 
+    //leaves out the one I just added to the team'
     setZombieFighters(zombieFighters.filter(f => f.id !== fighter.id));
+    //Alert if money is too low.
   } else {
     alert("not enough money!")
   }
 }
+
+//Similar to Add, but remove.  I'm so tired...
 const handleRemoveFromTeam = (fighter) => {
-  setTeam(team.filter(member => member.id !== fighter.id));
+  setTeam(team.filter(f => f.id !== fighter.id));
   setMoney(money + fighter.price);
   setZombieFighters([...zombieFighters, fighter]);
 };
+
+//Starting roster of available fighters.
 const [zombieFighters, setZombieFighters] = useState([
     {
       id: 1,
@@ -103,16 +124,22 @@ const [zombieFighters, setZombieFighters] = useState([
   ]
 )
 
+//Return the html that will display the app on the page.
   return (
     <>
+    {/* Title */}
     <h1>Zombie Butt Kicking Squad</h1>
+    {/* Conditional render of the team display.  
+    If the team has nothing it displays text prompting us to pick. */}
     {team.length === 0 ? (
       <p>Pick some team members</p>
     ) : (
       <ul>
+        {/* Shows each fighter's info. */}
         {team.map((member, index) => (
           <li key={index}>
             {member.name}: 
+            {/* broken images. */}
             {/* {member.img} */}
             ${member.price}, 
             Str: {member.strength}, 
@@ -122,9 +149,13 @@ const [zombieFighters, setZombieFighters] = useState([
         ))}
       </ul>
     )}
+
+    {/* Display current money value */}
+    {/* React and the add & remove fighter logic allows thr value to be updated in real time */}
     <h3>Money: ${money}</h3>
 
-      
+    {/* Loops through available fighters, displays information. 
+    Add button that triggers above handleAddToTeam logic. */}
       <ul>
         {zombieFighters.map((fighter, index) => (
           <li key={index}>
